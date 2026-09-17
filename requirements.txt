@@ -1,0 +1,4 @@
+# [extensions] brings in LiteLLM, used here to route every agent through
+# LM Studio's local OpenAI-compatible API.
+google-adk[extensions]
+requests

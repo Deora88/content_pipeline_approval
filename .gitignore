@@ -1,0 +1,19 @@
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# Virtual environments
+.venv/
+myvenv/
+venv/
+
+# Local session data
+content_pipeline/.adk/
+
+# Secrets
+content_pipeline/.env
+
+# OS / editor noise
+.DS_Store
