@@ -2,7 +2,27 @@
 
 Topic -> Tavily research -> Short post -> Human approval -> Final output
 
+See [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) for the web and ADK architectures, request flows, API contracts, external integrations, state model, and deployment considerations.
+
 This project is a Google ADK pipeline that uses OpenRouter as the model provider and Tavily for live web research.
+
+## Technologies used
+
+- **Python 3.13** - application and pipeline runtime
+- **FastAPI** - web server and REST API layer
+- **Uvicorn** - ASGI server used to run the web dashboard
+- **Google Agent Development Kit (ADK)** - multi-agent orchestration
+- **LiteLLM** - routes ADK model calls to OpenRouter
+- **OpenRouter** - LLM provider for research summarization, copywriting, and refinement
+- **Tavily Search API** - live web research and source retrieval
+- **Requests** - outbound HTTP requests to AI, research, and social APIs
+- **Pydantic** - request validation and API schemas
+- **python-dotenv** - loads environment configuration from `.env` files
+- **HTML, CSS, and JavaScript** - browser dashboard in `static/`
+- **LinkedIn REST API** - LinkedIn publishing
+- **Instagram Graph API** - Instagram media container and publishing workflow
+- **X API v2 with OAuth 2.0 PKCE** - X/Twitter publishing and account authorization
+- **Meta Graph API** - Facebook Page publishing
 
 ## Setup in VS Code
 

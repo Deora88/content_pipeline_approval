@@ -144,7 +144,7 @@ researcher_agent = LlmAgent(
     model=_openrouter_model(),
     name="researcher",
     tools=[search_tool],
-    generate_content_config=_config(max_output_tokens=180),
+    generate_content_config=_config(max_output_tokens=120),
     instruction="""
 You are a research assistant. Use the Tavily web search tool to gather current
 facts about the user's topic. Then extract the topic into 2-3 concise notes
@@ -158,10 +158,10 @@ Output ONLY the notes, nothing else.
 writer_agent = LlmAgent(
     model=_openrouter_model(),
     name="writer",
-    generate_content_config=_config(temperature=0.5, max_output_tokens=200),
+    generate_content_config=_config(temperature=0.5, max_output_tokens=120),
     instruction="""
 You are a social media copywriter. Use the user topic and create a single,
-punchy social media post. Write exactly 3 or 4 short lines, under 200
+punchy social media post. Write exactly 2 or 3 short lines, under 120
 characters total, with one sentence or phrase per line. Do not add labels,
 bullets, numbering, or blank lines. Output ONLY the post text.
 """,
