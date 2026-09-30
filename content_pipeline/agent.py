@@ -12,10 +12,13 @@ override the default model.
 
 Run with:
     adk run content_pipeline
-from the parent directory, or `adk web` for the browser UI.
-"""
+from the parent directory.
 
-"""Google ADK content pipeline using OpenRouter.
+Note: the approval step below uses a blocking terminal `input()` call, which
+requires a real TTY. This pipeline is not compatible with `adk web`, which
+runs agents in a non-interactive server context; use the terminal runner, or
+replace the approval callback with a non-blocking mechanism (e.g. polling a
+web-exposed approval endpoint) before using `adk web`.
 
 This keeps the project in the ADK model while removing the fragile
 approval-tool loop that depends on model function calling. The approval is
@@ -111,7 +114,7 @@ async def _prompt_for_approval_after_draft(callback_context) -> None:
     else:
         callback_context.state["approval_status"] = "rejected"
         callback_context.state["final_post"] = "No approved draft available."
-        print("\nThe post will be reviewed and rewritten.\n")
+        print("\nDraft rejected. Re-run the pipeline to generate a new draft.\n")
 
 
 def _openrouter_model(tool_choice: str | None = None) -> LiteLlm:
@@ -144,7 +147,7 @@ researcher_agent = LlmAgent(
     model=_openrouter_model(),
     name="researcher",
     tools=[search_tool],
-    generate_content_config=_config(max_output_tokens=120),
+    generate_content_config=_config(max_output_tokens=400),
     instruction="""
 You are a research assistant. Use the Tavily web search tool to gather current
 facts about the user's topic. Then extract the topic into 2-3 concise notes
@@ -158,7 +161,7 @@ Output ONLY the notes, nothing else.
 writer_agent = LlmAgent(
     model=_openrouter_model(),
     name="writer",
-    generate_content_config=_config(temperature=0.5, max_output_tokens=120),
+    generate_content_config=_config(temperature=0.5, max_output_tokens=400),
     instruction="""
 You are a social media copywriter. Use the user topic and create a single,
 punchy social media post. Write exactly 2 or 3 short lines, under 120
