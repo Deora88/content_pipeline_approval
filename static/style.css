@@ -15,7 +15,6 @@
   --accent-amber: #f59e0b;
   --accent-red: #ef4444;
   --linkedin-blue: #0a66c2;
-  --instagram-gradient: linear-gradient(45deg, #f09433 0%, #e6683c 25%, #dc2743 50%, #cc2366 75%, #bc1888 100%);
   --shadow-sm: 0 2px 4px rgba(0, 0, 0, 0.2);
   --shadow-md: 0 4px 20px rgba(0, 0, 0, 0.4);
   --shadow-lg: 0 10px 30px rgba(0, 0, 0, 0.6);
@@ -90,17 +89,6 @@ body {
   display: flex;
   align-items: center;
   gap: 8px;
-}
-
-.badge-pro {
-  font-size: 0.68rem;
-  padding: 2px 8px;
-  background: rgba(99, 102, 241, 0.2);
-  color: #a5b4fc;
-  border: 1px solid rgba(99, 102, 241, 0.4);
-  border-radius: var(--radius-full);
-  font-weight: 600;
-  text-transform: uppercase;
 }
 
 .subtitle {
@@ -446,29 +434,6 @@ select:focus {
   filter: brightness(1.12);
 }
 
-.btn-instagram {
-  background: var(--instagram-gradient);
-  color: #fff;
-  width: 100%;
-}
-
-.btn-instagram:hover {
-  filter: brightness(1.12);
-}
-
-.btn-twitter {
-  background: #000000;
-  color: #fff;
-  width: 100%;
-  border: 1px solid rgba(255, 255, 255, 0.2);
-  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.5);
-}
-
-.btn-twitter:hover {
-  background: #181818;
-  border-color: rgba(255, 255, 255, 0.4);
-}
-
 .btn-facebook {
   background: #1877f2;
   color: #fff;
@@ -654,24 +619,8 @@ select:focus {
   background: linear-gradient(135deg, #0a66c2, #004182);
 }
 
-.avatar-ig {
-  background: #111827;
-}
-
-.avatar-tw {
-  background: #000000;
-  border: 1px solid rgba(255, 255, 255, 0.2);
-}
-
 .avatar-fb {
   background: #1877f2;
-}
-
-.ig-avatar-ring {
-  padding: 2px;
-  border-radius: 50%;
-  background: var(--instagram-gradient);
-  display: inline-block;
 }
 
 .mockup-author-name {
@@ -747,137 +696,6 @@ select:focus {
 .action-btn:hover {
   background: rgba(255, 255, 255, 0.06);
   color: #fff;
-}
-
-/* Instagram Specific Mockup */
-.ig-media-card {
-  height: 220px;
-  background: radial-gradient(circle at top right, #3b82f6, #8b5cf6, #ec4899);
-  border-radius: var(--radius-sm);
-  display: flex;
-  align-items: flex-end;
-  padding: 16px;
-  position: relative;
-  overflow: hidden;
-}
-
-.ig-media-overlay {
-  background: rgba(15, 23, 42, 0.85);
-  backdrop-filter: blur(8px);
-  padding: 12px 14px;
-  border-radius: var(--radius-sm);
-  width: 100%;
-  border: 1px solid rgba(255, 255, 255, 0.1);
-}
-
-.ig-category-tag {
-  font-size: 0.65rem;
-  letter-spacing: 0.05em;
-  font-weight: 700;
-  color: #38bdf8;
-}
-
-.ig-media-overlay h4 {
-  font-size: 0.95rem;
-  color: #fff;
-  margin: 2px 0;
-}
-
-.ig-media-sub {
-  font-size: 0.72rem;
-  color: var(--text-muted);
-}
-
-.ig-action-bar {
-  display: flex;
-  justify-content: space-between;
-  padding-top: 4px;
-  color: #fff;
-}
-
-.ig-left-actions {
-  display: flex;
-  gap: 16px;
-  cursor: pointer;
-}
-
-.ig-likes-text {
-  font-size: 0.8rem;
-  color: #fff;
-}
-
-.caption-user {
-  font-weight: 700;
-  color: #fff;
-  margin-right: 6px;
-}
-
-/* Twitter / X Specific Mockup */
-.twitter-mockup {
-  background: #000000;
-  border: 1px solid rgba(255, 255, 255, 0.15);
-}
-
-.tw-header {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-}
-
-.verified-icon {
-  display: inline-block;
-  vertical-align: middle;
-  margin: 0 4px;
-}
-
-.tw-handle, .tw-time, .tw-dot {
-  color: var(--text-muted);
-  font-size: 0.8rem;
-  font-weight: 400;
-}
-
-.tw-char-pill {
-  margin-left: auto;
-  font-size: 0.72rem;
-  font-weight: 700;
-  padding: 3px 8px;
-  background: rgba(29, 155, 240, 0.15);
-  color: #1d9bf0;
-  border-radius: var(--radius-full);
-  border: 1px solid rgba(29, 155, 240, 0.3);
-}
-
-.tw-char-pill.warning {
-  background: rgba(239, 68, 68, 0.15);
-  color: #f87171;
-  border-color: rgba(239, 68, 68, 0.4);
-}
-
-.tw-body {
-  font-size: 0.95rem;
-  line-height: 1.5;
-  color: #e7e9ea;
-}
-
-.tw-interaction-bar {
-  display: flex;
-  justify-content: space-between;
-  padding: 10px 4px 2px;
-  border-top: 1px solid rgba(255, 255, 255, 0.08);
-  color: var(--text-muted);
-}
-
-.tw-stat-btn {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  font-size: 0.76rem;
-  cursor: pointer;
-  transition: color 0.2s ease;
-}
-
-.tw-stat-btn:hover {
-  color: #1d9bf0;
 }
 
 /* Facebook Specific Mockup */

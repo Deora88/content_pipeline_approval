@@ -1,4 +1,12 @@
-# [extensions] brings in LiteLLM, used here to route every agent through
-# LM Studio's local OpenAI-compatible API.
+# Google ADK; the [extensions] extra brings in LiteLLM, which routes every
+# agent through OpenRouter's OpenAI-compatible API (used by content_pipeline/agent.py).
 google-adk[extensions]
+
+# Web backend (server.py)
+fastapi
+uvicorn
+pydantic
+
+# Shared
+python-dotenv
 requests
