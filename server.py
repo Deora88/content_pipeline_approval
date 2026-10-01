@@ -1,5 +1,4 @@
 import os
-import json
 import time
 import uuid
 import requests
@@ -8,7 +7,7 @@ from pathlib import Path
 from dotenv import load_dotenv
 from fastapi import FastAPI, HTTPException
 from fastapi.staticfiles import StaticFiles
-from fastapi.responses import FileResponse, JSONResponse
+from fastapi.responses import FileResponse
 from pydantic import BaseModel
 
 # Load environment variables
@@ -103,7 +102,7 @@ def perform_tavily_search(query: str) -> Dict[str, Any]:
         resp.raise_for_status()
         data = resp.json()
         return {
-            "answer": data.get("answer", "No direct answer generated."),
+            "answer": data.get("answer"),
             "results": [
                 {
                     "title": r.get("title", "Insight"),
@@ -191,8 +190,9 @@ def call_llm(prompt: str, system_prompt: str) -> tuple[str, bool]:
 
 
 def _record_publish_result(post_id: Optional[str], platform: str, result: Dict[str, Any]) -> None:
-    """Record a publish attempt against its post so /api/history reflects reality
-    instead of staying frozen at 'pending_approval' forever."""
+    """Record every publish attempt — success, failure, or not_configured —
+    against its post so /api/history reflects reality instead of staying
+    frozen at 'pending_approval' forever."""
     if not post_id:
         return
     for record in POST_HISTORY:
@@ -200,12 +200,14 @@ def _record_publish_result(post_id: Optional[str], platform: str, result: Dict[s
             record.setdefault("published_to", []).append({
                 "platform": platform,
                 "status": result.get("status"),
-                "mode": result.get("mode"),
                 "url": result.get("url"),
+                "error": result.get("error"),
                 "at": time.strftime("%Y-%m-%d %H:%M:%S"),
             })
             if result.get("status") == "success":
                 record["status"] = "published_live"
+            elif record.get("status") == "pending_approval":
+                record["status"] = "publish_attempted"
             break
 
 
@@ -324,11 +326,13 @@ async def publish_linkedin(req: PublishLinkedInRequest):
     author_urn = req.author_urn or CONFIG.get("LINKEDIN_AUTHOR_URN")
 
     if not token or not author_urn:
-        return {
+        result = {
             "status": "not_configured",
             "platform": "LinkedIn",
             "error": "Add LINKEDIN_ACCESS_TOKEN and LINKEDIN_AUTHOR_URN in Settings to publish."
         }
+        _record_publish_result(req.post_id, "LinkedIn", result)
+        return result
 
     payload = {
         "author": author_urn,
@@ -356,7 +360,6 @@ async def publish_linkedin(req: PublishLinkedInRequest):
             post_id = resp.headers.get("x-restli-id")
             result = {
                 "status": "success",
-                "mode": "live",
                 "platform": "LinkedIn",
                 "post_id": post_id,
                 # Only build a feed link when LinkedIn actually returned the real ID —
@@ -370,9 +373,8 @@ async def publish_linkedin(req: PublishLinkedInRequest):
             error_body = resp.text
             # Detect common LinkedIn permission errors and provide actionable guidance
             if status_code == 403 and "ACCESS_DENIED" in error_body:
-                return {
+                result = {
                     "status": "api_error",
-                    "mode": "live",
                     "platform": "LinkedIn",
                     "status_code": status_code,
                     "error": (
@@ -386,22 +388,20 @@ async def publish_linkedin(req: PublishLinkedInRequest):
                     ),
                     "raw_error": error_body
                 }
-            return {
+                _record_publish_result(req.post_id, "LinkedIn", result)
+                return result
+            result = {
                 "status": "api_error",
-                "mode": "live",
                 "platform": "LinkedIn",
                 "status_code": status_code,
-                "error": error_body,
-                "payload_sent": payload
+                "error": error_body
             }
+            _record_publish_result(req.post_id, "LinkedIn", result)
+            return result
     except Exception as e:
-        return {
-            "status": "error",
-            "mode": "live",
-            "platform": "LinkedIn",
-            "error": str(e),
-            "payload_sent": payload
-        }
+        result = {"status": "error", "platform": "LinkedIn", "error": str(e)}
+        _record_publish_result(req.post_id, "LinkedIn", result)
+        return result
 
 
 @app.post("/api/publish/facebook")
@@ -443,7 +443,7 @@ async def publish_facebook(req: PublishFacebookRequest):
                 identity_data = identity_resp.json()
                 page_id = identity_data.get("id")
                 if not page_id:
-                    return {
+                    result = {
                         "status": "configuration_error",
                         "platform": "Facebook",
                         "error": (
@@ -452,6 +452,8 @@ async def publish_facebook(req: PublishFacebookRequest):
                         ),
                         "details": identity_data,
                     }
+                    _record_publish_result(req.post_id, "Facebook", result)
+                    return result
 
             url = f"https://graph.facebook.com/v21.0/{page_id}/feed"
             resp = requests.post(
@@ -466,7 +468,6 @@ async def publish_facebook(req: PublishFacebookRequest):
             if "id" in data:
                 result = {
                     "status": "success",
-                    "mode": "live",
                     "platform": "Facebook",
                     "post_id": data["id"],
                     "url": f"https://facebook.com/{data['id']}",
@@ -484,20 +485,26 @@ async def publish_facebook(req: PublishFacebookRequest):
                         ),
                         "meta_error": data,
                     }
-                return {
+                result = {
                     "status": "api_error",
                     "platform": "Facebook",
                     "status_code": resp.status_code,
                     "error": error_message
                 }
+                _record_publish_result(req.post_id, "Facebook", result)
+                return result
         except Exception as e:
-            return {"status": "error", "platform": "Facebook", "error": str(e)}
+            result = {"status": "error", "platform": "Facebook", "error": str(e)}
+            _record_publish_result(req.post_id, "Facebook", result)
+            return result
     else:
-        return {
+        result = {
             "status": "not_configured",
             "platform": "Facebook",
             "error": "Add a Facebook Page access token before publishing live.",
         }
+        _record_publish_result(req.post_id, "Facebook", result)
+        return result
 
 
 @app.get("/api/history")

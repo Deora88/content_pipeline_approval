@@ -164,9 +164,9 @@ writer_agent = LlmAgent(
     generate_content_config=_config(temperature=0.5, max_output_tokens=400),
     instruction="""
 You are a social media copywriter. Use the user topic and create a single,
-punchy social media post. Write exactly 2 or 3 short lines, under 120
-characters total, with one sentence or phrase per line. Do not add labels,
-bullets, numbering, or blank lines. Output ONLY the post text.
+punchy social media post. Write 3 to 5 short lines, under 280 characters
+total, with one sentence or phrase per line. Do not add labels, bullets,
+numbering, or blank lines. Output ONLY the post text.
 """,
     output_key="draft",
     after_agent_callback=_prompt_for_approval_after_draft,

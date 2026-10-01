@@ -77,7 +77,8 @@ The app is designed so that nothing fake ever looks real:
 ├── server.py                 # FastAPI backend (web workflow)
 ├── requirements.txt
 ├── README.md
-├── docs/ARCHITECTURE.md
+├── docs/
+│   └── ARCHITECTURE.md       # architecture, request flow, and code walkthrough
 ├── static/
 │   ├── index.html            # dashboard markup
 │   ├── app.js                # dashboard logic (fetch calls, previews, publish flow)
@@ -205,4 +206,4 @@ An earlier version stalled because approval depended on the model reliably emitt
 
 Instagram and Twitter/X support was removed. The project currently publishes to LinkedIn and Facebook only.
 
-See [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) for architecture and request-flow details. If that document still mentions Instagram, Twitter/X, sandbox or simulated publishing, it should be updated to match this README.
+See [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) for architecture, request flow, and a code walkthrough.

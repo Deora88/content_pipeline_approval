@@ -303,10 +303,17 @@ document.addEventListener("DOMContentLoaded", () => {
       banner = document.createElement("div");
       banner.id = "fallbackWarningBanner";
       banner.style.cssText = "display:none;background:#7c2d12;color:#fff;padding:8px 12px;border-radius:6px;margin-bottom:8px;font-weight:600;";
-      banner.textContent = "⚠️ AI generation unavailable — this is placeholder text, not a real draft for your topic. Do not approve as-is.";
+      banner.textContent = "⚠️ AI generation unavailable — this is placeholder text, not a real draft for your topic. Refine or edit it before approving.";
       draftEditor.parentNode.insertBefore(banner, draftEditor);
     }
     banner.style.display = isFallback ? "block" : "none";
+    // Block approval outright while the draft is a fallback template, rather
+    // than only warning — the reviewer shouldn't be able to one-click publish
+    // placeholder text.
+    approveAndPublishBtn.disabled = isFallback;
+    approveOnlyBtn.disabled = isFallback;
+    approveAndPublishBtn.title = isFallback ? "Refine or edit the draft before approving — this is placeholder text." : "";
+    approveOnlyBtn.title = approveAndPublishBtn.title;
   }
 
   function renderResearch(research) {
@@ -368,6 +375,7 @@ document.addEventListener("DOMContentLoaded", () => {
         }
         draftEditor.value = data.revised_draft;
         updateTextStatsAndPreview();
+        setFallbackWarning(false); // a successful refine is always real AI output, never a fallback
         addLog("Refinement applied successfully.", "success");
         showToast("Draft updated!");
       } catch (err) {
@@ -462,11 +470,8 @@ document.addEventListener("DOMContentLoaded", () => {
       const data = await res.json();
       
       if (data.status === "success") {
-        linkedinStatusText.textContent = `Published: ${data.post_id}`;
-        addLog(`[LINKEDIN SUCCESS] Post ID: ${data.post_id}`, "success");
-        if (data.payload_sent) {
-          addLog(`LinkedIn Payload: ${JSON.stringify(data.payload_sent)}`);
-        }
+        linkedinStatusText.textContent = data.post_id ? `Published: ${data.post_id}` : "Published";
+        addLog(`[LINKEDIN SUCCESS]${data.post_id ? ` Post ID: ${data.post_id}` : " (LinkedIn did not return a post ID)"}`, "success");
         return { platform: "LinkedIn", ok: true };
       } else {
         linkedinStatusText.textContent = `Error: ${formatApiError(data.error)}`;
@@ -504,9 +509,6 @@ document.addEventListener("DOMContentLoaded", () => {
       if (data.status === "success") {
         facebookStatusText.textContent = `Published: ${data.post_id}`;
         addLog(`[FACEBOOK SUCCESS] Post ID: ${data.post_id}${data.url ? ` | URL: ${data.url}` : ""}`, "success");
-        if (data.payload_sent) {
-          addLog(`Facebook Payload: ${JSON.stringify(data.payload_sent)}`);
-        }
         return { platform: "Facebook", ok: true };
       } else {
         facebookStatusText.textContent = `Error: ${formatApiError(data.error)}`;
